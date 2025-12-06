@@ -6,10 +6,12 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
     plugins: [react()],
+    base: '/',
     define: {
-      // Prevents "process is not defined" error in browser
-      'process.env.API_KEY': JSON.stringify(env.API_KEY),
-      'process.env': {} 
+      // Robustly handle environment variables
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
+      // Polyfill process.env to prevent "process is not defined" crashes in libraries
+      'process.env': JSON.stringify({}) 
     }
   };
 });
